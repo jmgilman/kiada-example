@@ -18,7 +18,8 @@ in
         (utils.devshell.profiles.format {})
       ];
       packages = with nixpkgs; [
-        # Add packages
+        kind
+        kubectl
       ];
       commands = [] ++ taskCommands;
     };
