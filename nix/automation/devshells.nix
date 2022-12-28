@@ -12,7 +12,7 @@
 in
   l.mapAttrs (_: std.lib.dev.mkShell) {
     default = {...}: {
-      name = "project devshell";
+      name = "kube devshell";
       imports = [
         (utils.devshell.profiles.core {})
         (utils.devshell.profiles.format {})
