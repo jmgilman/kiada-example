@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# This script configures a local kind cluster with the calico networking stack
+# and MetalLB providing the load balancing service.
+
 set -e
 
 # Create the cluster
