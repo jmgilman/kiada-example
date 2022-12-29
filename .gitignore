@@ -1,4 +1,5 @@
 .std
+.terraform
 result/**
 
 .envrc.local
