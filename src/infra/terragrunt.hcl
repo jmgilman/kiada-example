@@ -1,3 +1,9 @@
+locals {
+    region = "us-west-2"
+    bucket = "jmgilman-kiada-example"
+    lock = "jmgilman-kiada-example"
+}
+
 remote_state {
   backend = "s3"
   generate = {
@@ -5,13 +11,30 @@ remote_state {
     if_exists = "overwrite"
   }
   config = {
-    bucket = "jmgilman-kiada-example"
+    bucket = local.bucket
 
     key = "${path_relative_to_include()}/terraform.tfstate"
-    region         = "us-west-2"
+    region         = local.region
     encrypt        = true
-    dynamodb_table = "jmgilman-kiada-example"
+    dynamodb_table = local.lock
   }
+}
+
+generate "locals" {
+    path = "locals.tf"
+    if_exists = "overwrite"
+    contents = <<EOF
+locals {
+  # Used for importing remote state
+  region = "${local.region}"
+  bucket = "${local.bucket}"
+  lock = "${local.lock}"
+
+  # Used for labelling
+  name = basename(abspath("$${path.module}"))
+  env = basename(abspath("$${path.module}/.."))
+}
+EOF
 }
 
 generate "provider" {
@@ -19,7 +42,7 @@ generate "provider" {
   if_exists = "overwrite"
   contents = <<EOF
 provider "aws" {
-  region = "us-west-2"
+  region = local.region
 }
 EOF
 }
@@ -28,11 +51,6 @@ generate "label" {
     path = "label.tf"
     if_exists = "overwrite"
     contents = <<EOF
-locals {
-  name = basename(abspath("$${path.module}"))
-  env = basename(abspath("$${path.module}/.."))
-}
-
 module "label" {
   # v0.25.0
   source = "github.com/cloudposse/terraform-null-label?ref=488ab91e34a24a86957e397d9f7262ec5925586a"
