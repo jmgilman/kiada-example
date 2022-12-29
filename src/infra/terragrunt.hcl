@@ -20,15 +20,27 @@ generate "provider" {
   contents = <<EOF
 provider "aws" {
   region = "us-west-2"
+}
+EOF
+}
 
-  # Tags to apply to all AWS resources by default
-  default_tags {
-    tags = {
-      Owner     = "SRE"
-      ManagedBy = "Terraform"
-      Environment = "${title(split("/", path_relative_to_include())[0])}"
-    }
-  }
+generate "label" {
+    path = "label.tf"
+    if_exists = "overwrite"
+    contents = <<EOF
+locals {
+  name = basename(abspath("$${path.module}"))
+  env = basename(abspath("$${path.module}/.."))
+}
+
+module "label" {
+  # v0.25.0
+  source = "github.com/cloudposse/terraform-null-label?ref=488ab91e34a24a86957e397d9f7262ec5925586a"
+
+  namespace   = "jmgilman"
+  environment = "kiada"
+  stage       = local.env
+  name        = local.name
 }
 EOF
 }
