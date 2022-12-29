@@ -1,6 +1,8 @@
 .std
 result/**
 
+.envrc.local
+
 # nixago: ignore-linked-files
 lefthook.yml
 .conform.yaml
