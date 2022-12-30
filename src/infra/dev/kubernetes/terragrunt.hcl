@@ -7,10 +7,8 @@ dependency "network" {
   config_path = "../network"
 
   mock_outputs = {
-    vpc = {
-        vpc_id = "mock-id"
-        private_subnets = []
-    }
+    vpc_id = "mock-id"
+    private_subnets = []
   }
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
@@ -30,6 +28,6 @@ inputs = {
 
   instance_types = ["t2.medium", "t3.medium"]
 
-  vpc_id = dependency.network.outputs.vpc.vpc_id
-  subnet_ids = dependency.network.outputs.vpc.private_subnets
+  vpc_id = dependency.network.outputs.vpc_id
+  subnet_ids = dependency.network.outputs.private_subnets
 }
