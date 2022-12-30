@@ -4,8 +4,6 @@
 # Terraform/terragrunt generated files
 .terraform
 .terragrunt-cache
-provider.tf
-backend.tf
 
 # Nix generated files
 result/**
