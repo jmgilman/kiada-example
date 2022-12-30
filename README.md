@@ -3,6 +3,25 @@
 This repository contains a fully reproducible example of deploying the example
 application from [Kubernetes in Action][kia].
 
+## Quick Start
+
+Ensure you're successfully authenticated to an AWS account with appropriate
+permissions to create all of the required resources. To initialize the
+environment:
+
+```
+terragrunt run-all init
+```
+
+To deploy the infrastructure:
+
+```
+terragrunt run-all apply
+```
+
+Note that EKS clusters are notorious for being slow to come up. The apply can
+take up to 20 minutes to complete successfully.
+
 ## Shell
 
 This project is powered by [Nix]. You can enter the development shell by running
