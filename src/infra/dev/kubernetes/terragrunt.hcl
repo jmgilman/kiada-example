@@ -1,6 +1,9 @@
+locals {
+    env = split("/", path_relative_to_include())[0]
+}
+
 include "root" {
   path = find_in_parent_folders()
-  expose = true
 }
 
 dependency "network" {
@@ -19,7 +22,7 @@ terraform {
 }
 
 inputs = {
-  cluster_name = "kiada-${include.root.locals.env}"
+  cluster_name = "kiada-${local.env}"
   cluster_version = "1.24"
 
   cluster_desired_size = 2

@@ -2,8 +2,6 @@ locals {
     region = "us-west-2"
     bucket = "jmgilman-kiada-example"
     lock = "jmgilman-kiada-example"
-    env = split("/", path_relative_to_include())[0]
-    name = split("/", path_relative_to_include())[1]
 }
 
 remote_state {
@@ -36,7 +34,7 @@ inputs = {
     label = {
         namespace = "jmgilman"
         environment = "kiada"
-        stage = local.env
-        name = local.name
+        stage = split("/", path_relative_to_include())[0]
+        name = split("/", path_relative_to_include())[1]
     }
 }
