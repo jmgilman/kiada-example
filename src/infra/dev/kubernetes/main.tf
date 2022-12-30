@@ -1,25 +1,19 @@
-data "terraform_remote_state" "network" {
-  backend = "s3"
-  config = {
-    bucket = local.bucket
-    region = local.region
-    key    = "${local.env}/network/terraform.tfstate"
-  }
-}
-
-locals {
-  vpc_id     = data.terraform_remote_state.network.outputs.vpc.vpc_id
-  subnet_ids = data.terraform_remote_state.network.outputs.vpc.private_subnets
-}
-
 module "kubernetes" {
   source = "../../modules/kubernetes"
 
-  cluster_name    = "kiada-${local.env}"
-  cluster_version = "1.24"
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
-  vpc_id     = local.vpc_id
-  subnet_ids = local.subnet_ids
+  cluster_desired_size = var.cluster_desired_size
+  cluster_min_size     = var.cluster_min_size
+  cluser_max_size      = var.cluser_max_size
+
+  vpc_id     = var.vpc_id
+  subnet_ids = var.subnet_ids
+
+  node_disk_size         = var.node_disk_size
+  instance_types         = var.instance_types
+  instance_capacity_type = var.instance_capacity_type
 
   label = module.label
 }

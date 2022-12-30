@@ -25,12 +25,12 @@ generate "locals" {
     if_exists = "overwrite"
     contents = <<EOF
 locals {
-  # Used for importing remote state
+  # State information
   region = "${local.region}"
   bucket = "${local.bucket}"
   lock = "${local.lock}"
 
-  # Used for labelling
+  # Local module name and environment
   name = basename(abspath("$${path.module}"))
   env = basename(abspath("$${path.module}/.."))
 }

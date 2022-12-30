@@ -1,8 +1,8 @@
 module "network" {
   source = "../../modules/network"
 
-  cidr        = "10.0.0.0/16"
-  subnet_bits = 8
-  azs         = 3
+  cidr        = var.cidr
+  subnet_bits = var.subnet_bits
+  azs         = var.azs
   label       = module.label
 }
