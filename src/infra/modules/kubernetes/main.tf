@@ -1,3 +1,16 @@
+module "label" {
+  # v0.25.0
+  source = "github.com/cloudposse/terraform-null-label?ref=488ab91e34a24a86957e397d9f7262ec5925586a"
+
+  namespace   = var.label.namespace
+  environment = var.label.environment
+  stage       = var.label.stage
+  name        = var.label.name
+  attributes  = var.label.attributes
+  delimiter   = var.label.delimiter
+  tags        = var.label.tags
+}
+
 module "this" {
   # v19.4.2
   source = "github.com/terraform-aws-modules/terraform-aws-eks?ref=1f1cb3a5d7ba5e9b771fb70ed5ef251a9d12aa70"
@@ -40,5 +53,5 @@ module "this" {
     }
   }
 
-  tags = var.label.tags
+  tags = module.label.tags
 }

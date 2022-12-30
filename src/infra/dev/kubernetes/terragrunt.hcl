@@ -1,17 +1,27 @@
 include "root" {
   path = find_in_parent_folders()
+  expose = true
 }
 
 dependency "network" {
   config_path = "../network"
+
+  mock_outputs = {
+    vpc = {
+        vpc_id = "mock-id"
+        private_subnets = []
+    }
+  }
+  mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
 
-locals {
-    env = basename(abspath("$${path.module}/.."))
+terraform {
+    # See: https://github.com/gruntwork-io/terragrunt/issues/1675
+    source = "../../modules/kubernetes//."
 }
 
 inputs = {
-  cluster_name = "kiada-${local.env}"
+  cluster_name = "kiada-${include.root.locals.env}"
   cluster_version = "1.24"
 
   cluster_desired_size = 2

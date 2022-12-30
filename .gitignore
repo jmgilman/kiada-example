@@ -1,7 +1,16 @@
+# Std generated files
 .std
+
+# Terraform/terragrunt generated files
 .terraform
+.terragrunt-cache
+provider.tf
+backend.tf
+
+# Nix generated files
 result/**
 
+# Allows configuring local environment
 .envrc.local
 
 # nixago: ignore-linked-files

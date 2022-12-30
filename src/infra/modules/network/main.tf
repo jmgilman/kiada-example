@@ -9,11 +9,25 @@ locals {
   azs = slice(data.aws_availability_zones.available.names, 0, var.azs)
 }
 
+module "label" {
+  # v0.25.0
+  source = "github.com/cloudposse/terraform-null-label?ref=488ab91e34a24a86957e397d9f7262ec5925586a"
+
+  namespace   = var.label.namespace
+  environment = var.label.environment
+  stage       = var.label.stage
+  name        = var.label.name
+  attributes  = var.label.attributes
+  delimiter   = var.label.delimiter
+  tags        = var.label.tags
+}
+
+
 module "this" {
   # v3.18.1
   source = "github.com/terraform-aws-modules/terraform-aws-vpc?ref=aa61bc4346e1c430df8ec163ae9799d57df4af20"
 
-  name = var.label.id
+  name = module.label.id
 
   cidr = var.cidr
   azs  = local.azs
@@ -24,5 +38,5 @@ module "this" {
 
   enable_nat_gateway = true
 
-  tags = var.label.tags
+  tags = module.label.tags
 }
