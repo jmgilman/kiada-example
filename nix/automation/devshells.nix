@@ -18,8 +18,12 @@ in
         (utils.devshell.profiles.format {})
       ];
       packages = with nixpkgs; [
+        jsonnet
+        jsonnet-bundler
+        helm
         kind
         kubectl
+        tanka
       ];
       commands = [] ++ taskCommands;
     };
