@@ -12,11 +12,9 @@ dependency "kubernetes" {
 
   mock_outputs = {
     cluster_name = "mock-cluster"
-    cluster_endpoint = "mock-endpoint"
-    cluster_certificate = "mock-certificate"
+    cluster_region = "mock-region"
 
     oidc_provider_arn = "mock-arn"
-    oidc_provider = "mock-provider"
   }
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
@@ -28,10 +26,35 @@ terraform {
 
 inputs = {
   cluster_name = dependency.kubernetes.outputs.cluster_name
-  cluster_endpoint = dependency.kubernetes.outputs.cluster_endpoint
-  cluster_certificate = dependency.kubernetes.outputs.cluster_certificate
   cluster_region = include.root.locals.region
 
   oidc_provider_arn = dependency.kubernetes.outputs.oidc_provider_arn
-  oidc_provider = dependency.kubernetes.outputs.oidc_provider
+}
+
+generate "provider_kube" {
+  path = "provider_kube.tf"
+  if_exists = "overwrite"
+  contents = <<EOF
+provider "kubernetes" {
+  host                   = "${dependency.kubernetes.outputs.cluster_endpoint}"
+  cluster_ca_certificate = base64decode("${dependency.kubernetes.outputs.cluster_certificate}")
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--region", "${include.root.locals.region}", "--cluster-name", "${dependency.kubernetes.outputs.cluster_name}"]
+    command     = "aws"
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = "${dependency.kubernetes.outputs.cluster_endpoint}"
+    cluster_ca_certificate = base64decode("${dependency.kubernetes.outputs.cluster_certificate}")
+    exec {
+        api_version = "client.authentication.k8s.io/v1beta1"
+        args        = ["eks", "get-token", "--region", "${include.root.locals.region}", "--cluster-name", "${dependency.kubernetes.outputs.cluster_name}"]
+        command     = "aws"
+    }
+  }
+}
+EOF
 }
