@@ -1,7 +1,3 @@
-data "aws_eks_cluster_auth" "this" {
-  name = var.cluster_name
-}
-
 module "label" {
   # v0.25.0
   source = "github.com/cloudposse/terraform-null-label?ref=488ab91e34a24a86957e397d9f7262ec5925586a"
