@@ -20,7 +20,8 @@ in
       packages = with nixpkgs; [
         jsonnet
         jsonnet-bundler
-        helm
+        kubernetes-helm-wrapped
+        k2tf
         kind
         kubectl
         tanka
