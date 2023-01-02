@@ -1,21 +1,15 @@
-locals {
-    env = split("/", path_relative_to_include())[0]
-}
-
 include "root" {
   path = find_in_parent_folders()
   expose = true
 }
 
-dependency "network" {
-  config_path = "../network"
+include "common" {
+    path = find_in_parent_folders("common.hcl")
+    expose = true
+}
 
-  mock_outputs = {
-    vpc_id = "mock-id"
-    vpc_cidr_block = "mock-cidr"
-    database_subnet_group = "mock-subnet-group"
-  }
-  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+include "network" {
+    path = find_in_parent_folders("network.hcl")
 }
 
 terraform {
@@ -24,7 +18,7 @@ terraform {
 }
 
 inputs = {
-  name = "${local.env}-rds"
+  name = "${include.common.locals.env}-rds"
   instance = "db.t3.medium"
 
   storage = 20

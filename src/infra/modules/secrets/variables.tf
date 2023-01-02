@@ -37,7 +37,7 @@ variable "role_name" {
 variable "service_account_name" {
   type        = string
   description = "The name to use for the external secrets service account"
-  default     = "external-secrets-controller"
+  default     = "external-secrets-controller-irsa"
 }
 
 variable "label" {

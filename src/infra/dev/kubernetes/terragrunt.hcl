@@ -1,19 +1,14 @@
-locals {
-    env = split("/", path_relative_to_include())[0]
-}
-
 include "root" {
   path = find_in_parent_folders()
 }
 
-dependency "network" {
-  config_path = "../network"
+include "common" {
+    path = find_in_parent_folders("common.hcl")
+    expose = true
+}
 
-  mock_outputs = {
-    vpc_id = "mock-id"
-    private_subnets = []
-  }
-  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+include "network" {
+    path = find_in_parent_folders("network.hcl")
 }
 
 terraform {
@@ -22,7 +17,7 @@ terraform {
 }
 
 inputs = {
-  cluster_name = "kiada-${local.env}"
+  cluster_name = "kiada-${include.common.locals.env}"
   cluster_version = "1.24"
 
   cluster_desired_size = 2

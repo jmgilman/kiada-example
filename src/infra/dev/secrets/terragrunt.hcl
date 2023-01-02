@@ -1,24 +1,15 @@
-locals {
-    env = split("/", path_relative_to_include())[0]
-}
-
 include "root" {
   path = find_in_parent_folders()
   expose = true
 }
 
-dependency "kubernetes" {
-  config_path = "../kubernetes"
+include "common" {
+    path = find_in_parent_folders("common.hcl")
+    expose = true
+}
 
-  mock_outputs = {
-    cluster_name = "mock-cluster"
-    cluster_region = "mock-region"
-    cluster_endpoint = "mock-endpoint"
-    cluster_certificate = "mock-certificate"
-
-    oidc_provider_arn = "mock-arn"
-  }
-  mock_outputs_allowed_terraform_commands = ["init", "validate"]
+include "kubernetes" {
+    path = find_in_parent_folders("kubernetes.hcl")
 }
 
 terraform {
@@ -33,59 +24,6 @@ inputs = {
   oidc_provider_arn = dependency.kubernetes.outputs.oidc_provider_arn
 
   namespace = "kube-system"
-  environment = local.env
+  environment = include.common.locals.env
   chart_version = "0.7.0"
-}
-
-generate "versions" {
-  path      = "versions.tf"
-  if_exists = "overwrite"
-  contents  = <<EOF
-    terraform {
-      required_providers {
-        kubectl = {
-          source = "gavinbunney/kubectl"
-          version = "1.14.0"
-        }
-      }
-    }
-EOF
-}
-
-generate "provider_kube" {
-  path = "provider_kube.tf"
-  if_exists = "overwrite"
-  contents = <<EOF
-provider "kubectl" {
-  host                   = "${dependency.kubernetes.outputs.cluster_endpoint}"
-  cluster_ca_certificate = base64decode("${dependency.kubernetes.outputs.cluster_certificate}")
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--region", "${include.root.locals.region}", "--cluster-name", "${dependency.kubernetes.outputs.cluster_name}"]
-    command     = "aws"
-  }
-}
-
-provider "kubernetes" {
-  host                   = "${dependency.kubernetes.outputs.cluster_endpoint}"
-  cluster_ca_certificate = base64decode("${dependency.kubernetes.outputs.cluster_certificate}")
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--region", "${include.root.locals.region}", "--cluster-name", "${dependency.kubernetes.outputs.cluster_name}"]
-    command     = "aws"
-  }
-}
-
-provider "helm" {
-  kubernetes {
-    host                   = "${dependency.kubernetes.outputs.cluster_endpoint}"
-    cluster_ca_certificate = base64decode("${dependency.kubernetes.outputs.cluster_certificate}")
-    exec {
-        api_version = "client.authentication.k8s.io/v1beta1"
-        args        = ["eks", "get-token", "--region", "${include.root.locals.region}", "--cluster-name", "${dependency.kubernetes.outputs.cluster_name}"]
-        command     = "aws"
-    }
-  }
-}
-EOF
 }
