@@ -13,10 +13,21 @@ dependency "kubernetes" {
   mock_outputs = {
     cluster_name = "mock-cluster"
     cluster_region = "mock-region"
+    cluster_endpoint = "mock-endpoint"
+    cluster_certificate = "mock-certificate"
 
     oidc_provider_arn = "mock-arn"
   }
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
+}
+
+dependency "dns" {
+    config_path = "../../global/dns"
+
+    mock_outputs = {
+        zone_arn = {}
+    }
+    mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
 
 terraform {
@@ -29,6 +40,11 @@ inputs = {
   cluster_region = include.root.locals.region
 
   oidc_provider_arn = dependency.kubernetes.outputs.oidc_provider_arn
+
+  albc_chart_version = "1.4.6"
+
+  edns_zones = [for domain, id in dependency.dns.outputs.zone_arn : id]
+  edns_chart_version = "6.12.2"
 }
 
 generate "provider_kube" {

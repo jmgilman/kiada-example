@@ -31,33 +31,30 @@ locals {
   }
 }
 
-resource "kubernetes_manifest" "this" {
-  manifest = {
-    apiVersion = "v1"
-    kind       = "ServiceAccount"
-    metadata = {
-      name      = var.service_account_name
-      namespace = "kube-system"
+resource "kubernetes_service_account" "aws-load-balancer-controller" {
+  metadata {
+    name      = var.service_account_name
+    namespace = var.namespace
 
-      labels = {
-        "app.kubernetes.io/component" = "controller"
+    labels = {
+      "app.kubernetes.io/component" = "controller"
+      "app.kubernetes.io/name"      = var.service_account_name
+    }
 
-        "app.kubernetes.io/name" = var.service_account_name
-      }
-
-      annotations = {
-        "eks.amazonaws.com/role-arn" = var.role_arn
-      }
+    annotations = {
+      "eks.amazonaws.com/role-arn" = var.role_arn
     }
   }
+  automount_service_account_token = true
 }
 
-resource "helm_release" "nginx_ingress" {
-  name = "aws-load-balancer-controller"
-
+resource "helm_release" "aws-load-balancer-controller" {
+  name       = "aws-load-balancer-controller"
+  namespace  = kubernetes_service_account.aws-load-balancer-controller.metadata.0.namespace
+  wait       = true
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
-  namespace  = "kube-system"
+  version    = var.chart_version
 
   set {
     name  = "clusterName"
@@ -76,10 +73,6 @@ resource "helm_release" "nginx_ingress" {
 
   set {
     name  = "serviceAccount.name"
-    value = var.service_account_name
+    value = kubernetes_service_account.aws-load-balancer-controller.metadata.0.name
   }
-
-  depends_on = [
-    kubernetes_manifest.this
-  ]
 }

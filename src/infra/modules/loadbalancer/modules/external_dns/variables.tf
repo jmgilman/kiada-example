@@ -1,8 +1,3 @@
-variable "cluster_name" {
-  type        = string
-  description = "Name of the EKS cluster"
-}
-
 variable "cluster_region" {
   type        = string
   description = "The region the cluster is located in"
@@ -20,12 +15,12 @@ variable "chart_version" {
 
 variable "namespace" {
   type        = string
-  description = "The namespace to deploy AWS Load Balancer Controller resources to"
+  description = "The namespace to deploy external-dns resources to"
   default     = "kube-system"
 }
 
 variable "service_account_name" {
   type        = string
   description = "The name to use for the AWS Load Balancer Controller service account"
-  default     = "aws-load-balancer-controller"
+  default     = "external-dns-controller"
 }

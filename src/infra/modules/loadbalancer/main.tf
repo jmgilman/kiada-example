@@ -1,3 +1,7 @@
+locals {
+  namespace = "kube-system"
+}
+
 module "label" {
   # v0.25.0
   source = "github.com/cloudposse/terraform-null-label?ref=488ab91e34a24a86957e397d9f7262ec5925586a"
@@ -11,17 +15,17 @@ module "label" {
   tags        = var.label.tags
 }
 
-module "load_balancer_controller_irsa_role" {
+module "alb_controller_irsa_role" {
   # v5.9.2
   source = "github.com/terraform-aws-modules/terraform-aws-iam//modules/iam-role-for-service-accounts-eks?ref=cb074e72f38dd969e1a8dc5a1bdd0f647ab666cd"
 
-  role_name                              = var.iam_role_name
+  role_name                              = var.albc_role_name
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
     ex = {
       provider_arn               = var.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:${var.service_account_name}"]
+      namespace_service_accounts = ["${local.namespace}:${var.albc_service_account_name}"]
     }
   }
 
@@ -33,7 +37,38 @@ module "alb_controller" {
 
   cluster_name         = var.cluster_name
   cluster_region       = var.cluster_region
-  service_account_name = var.service_account_name
+  service_account_name = var.albc_service_account_name
+  chart_version        = var.albc_chart_version
 
-  role_arn = module.load_balancer_controller_irsa_role.iam_role_arn
+  namespace = local.namespace
+  role_arn  = module.alb_controller_irsa_role.iam_role_arn
+}
+
+module "external_dns_irsa_role" {
+  # v5.9.2
+  source = "github.com/terraform-aws-modules/terraform-aws-iam//modules/iam-role-for-service-accounts-eks?ref=cb074e72f38dd969e1a8dc5a1bdd0f647ab666cd"
+
+  role_name                     = var.edns_role_name
+  attach_external_dns_policy    = true
+  external_dns_hosted_zone_arns = var.edns_zones
+
+  oidc_providers = {
+    ex = {
+      provider_arn               = var.oidc_provider_arn
+      namespace_service_accounts = ["${local.namespace}:${var.edns_service_account_name}"]
+    }
+  }
+
+  tags = module.label.tags
+}
+
+module "external_dns" {
+  source = "./modules/external_dns"
+
+  cluster_region       = var.cluster_region
+  service_account_name = var.edns_service_account_name
+  chart_version        = var.edns_chart_version
+
+  namespace = local.namespace
+  role_arn  = module.external_dns_irsa_role.iam_role_arn
 }

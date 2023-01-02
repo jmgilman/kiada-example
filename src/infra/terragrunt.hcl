@@ -1,6 +1,6 @@
 locals {
     region = "us-west-2"
-    bucket = "jmgilman-kiada-example"
+    bucket = "jmgilman-kiada-example-state"
     lock = "jmgilman-kiada-example"
 }
 
@@ -31,6 +31,11 @@ EOF
 }
 
 inputs = {
+    domains = {
+        "jmgilman.dev" = [
+            "2048.jmgilman.dev"
+        ]
+    }
     label = {
         namespace = "jmgilman"
         environment = "kiada"

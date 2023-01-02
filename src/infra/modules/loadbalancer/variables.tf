@@ -13,17 +13,45 @@ variable "oidc_provider_arn" {
   description = "The ARN of the cluster OIDC provider"
 }
 
-variable "iam_role_name" {
+variable "albc_chart_version" {
   type        = string
-  description = "The name to use for generated IAM role"
+  description = "Version to use of the AWS Load Balancer Controller chart "
+}
+
+variable "albc_role_name" {
+  type        = string
+  description = "The name to use for the AWS Load Balancer Controller IAM role"
   default     = "load-balancer-controller"
 }
 
-variable "service_account_name" {
+variable "albc_service_account_name" {
   type        = string
   description = "The name to use for the AWS Load Balancer Controller service account"
   default     = "aws-load-balancer-controller"
 }
+
+variable "edns_zones" {
+  type        = list(string)
+  description = "A list of hosted zone ARNs to allow the external DNS controller to access"
+}
+
+variable "edns_chart_version" {
+  type        = string
+  description = "Version to use of the external DNS chart"
+}
+
+variable "edns_role_name" {
+  type        = string
+  description = "The name to use for the external DNS controller IAM role"
+  default     = "external-dns"
+}
+
+variable "edns_service_account_name" {
+  type        = string
+  description = "The name to use for the external DNS controller service account"
+  default     = "external-dns-controller"
+}
+
 
 variable "label" {
   type = object({
