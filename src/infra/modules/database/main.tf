@@ -55,7 +55,7 @@ resource "aws_secretsmanager_secret_version" "this" {
     username             = postgresql_role.this[each.value].name
     password             = random_password.this[each.value].result
     engine               = data.aws_db_instance.database.engine
-    host                 = data.aws_db_instance.database.endpoint
+    host                 = split(":", data.aws_db_instance.database.endpoint)[0]
     port                 = data.aws_db_instance.database.port
     dbInstanceIdentifier = var.db_instance_id
   })

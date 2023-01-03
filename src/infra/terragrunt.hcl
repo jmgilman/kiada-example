@@ -1,6 +1,6 @@
 locals {
     region = "us-west-2"
-    bucket = "jmgilman-kiada-example"
+    bucket = "jmgilman-kiada-example-dev"
     lock = "jmgilman-kiada-example"
 }
 
@@ -33,7 +33,7 @@ EOF
 inputs = {
     domains = {
         "jmgilman.dev" = [
-            "2048.jmgilman.dev"
+            "tooljet.jmgilman.dev"
         ]
     }
     label = {

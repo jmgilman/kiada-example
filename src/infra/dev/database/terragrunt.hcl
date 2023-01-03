@@ -18,7 +18,7 @@ terraform {
 
 inputs = {
     databases = [
-        "wordpress"
+        "tooljet"
     ]
     db_instance_id = dependency.database_cluster.outputs.id
     environment = include.common.locals.env
