@@ -12,8 +12,8 @@ dependency "kubernetes" {
   mock_outputs_allowed_terraform_commands = ["init", "validate"]
 }
 
-generate "versions" {
-  path      = "versions.tf"
+generate "kube_versions" {
+  path      = "kube_versions.tf"
   if_exists = "overwrite"
   contents  = <<EOF
     terraform {

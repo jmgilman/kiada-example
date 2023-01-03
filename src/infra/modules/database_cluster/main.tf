@@ -71,3 +71,20 @@ module "db" {
 
   tags = module.label.tags
 }
+
+resource "aws_secretsmanager_secret" "this" {
+  name = "${var.environment}/db/root_account"
+  tags = module.label.tags
+}
+
+resource "aws_secretsmanager_secret_version" "this" {
+  secret_id = aws_secretsmanager_secret.this.id
+  secret_string = jsonencode({
+    username             = module.db.db_instance_username
+    password             = module.db.db_instance_password
+    engine               = module.db.db_instance_engine
+    host                 = split(":", module.db.db_instance_endpoint)[0]
+    port                 = module.db.db_instance_port
+    dbInstanceIdentifier = module.db.db_instance_id
+  })
+}

@@ -24,6 +24,7 @@ in
         k2tf
         kind
         kubectl
+        postgresql
         tanka
       ];
       commands = [] ++ taskCommands;

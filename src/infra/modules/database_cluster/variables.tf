@@ -33,6 +33,11 @@ variable "vpc_cidr" {
   description = "The CIDR of the VPC"
 }
 
+variable "environment" {
+  type        = string
+  description = "The name of the environment to scope secret access to"
+}
+
 variable "username" {
   type        = string
   description = "The username to use for the master user"

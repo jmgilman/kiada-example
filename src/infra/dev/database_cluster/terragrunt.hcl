@@ -27,4 +27,6 @@ inputs = {
   vpc_id = dependency.network.outputs.vpc_id
   vpc_subnet_group = dependency.network.outputs.database_subnet_group
   vpc_cidr = dependency.network.outputs.vpc_cidr_block
+
+  environment = include.common.locals.env
 }
