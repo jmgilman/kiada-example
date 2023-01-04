@@ -5,7 +5,7 @@
         "name": "environments/dev"
     },
     "spec": {
-        "apiServer": "https://59387E7E1BBEA81AD9B11E402315AEF2.gr7.us-west-2.eks.amazonaws.com",
+        "apiServer": "https://2DD3A89EA23CC7C9ADAFC92A08E1CAD3.gr7.us-west-2.eks.amazonaws.com",
         "namespace": "default",
         "resourceDefaults": {},
         "expectVersions": {}

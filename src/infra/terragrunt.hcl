@@ -1,6 +1,6 @@
 locals {
     region = "us-west-2"
-    bucket = "jmgilman-kiada-example-dev"
+    bucket = "jmgilman-kiada-example"
     lock = "jmgilman-kiada-example"
 }
 
